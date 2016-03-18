@@ -27,12 +27,14 @@ The crates are compatible with the MicroTCA standard, and contain a power supply
 
 MicroTCA specifies a complicated ``IPMI'' management system. For compatibility reasons with other MicroTCA systems, the necessary hardware (a microcontroller circuit) should be present on the AMCs, but IPMI should otherwise be ignored as much as possible e.g.\ by keeping the power supplies on at all times.
 
+The gateware/runtime upgrade mechanisms for the hardware components are TBD.
+
 \section{Master boards}
-A master board is a AMC that:
+A master board is a MicroTCA Carrier Hub (MCH) that:
 \begin{itemize}
 \setlength{\itemsep}{0pt}
 \item distributes DRTIO commands to the other cards in the crate over the MicroTCA backplane (star topology)
-\item distributes DRTIO commands to other crates 
+\item distributes DRTIO commands to other crates
 \item receives commands from another master board or the control PC
 \end{itemize}
 
@@ -53,7 +55,7 @@ The FMC also has digital pins that can be used to control the analog cards.
 
 DSP boards can be clocked from the backplane, or from a dedicated SMA connector on their front panel. High-quality clock distribution systems using semi-rigid coaxial cables can be used for particularly sensitive applications.
 
-Remaining space on the front panel of the AMC is used for TTL signals over SMA connectors.
+Remaining space on the front panel of the AMC is used for TTL signals over TBD connectors.
 
 DSP boards receive high level DRTIO commands from the backplane, and synthesize, buffer or process waveforms using their FPGA and SDRAM.
 
