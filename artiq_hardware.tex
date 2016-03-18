@@ -45,7 +45,7 @@ A master board includes clock recovery and cleanup circuitry, and can be used to
 The FPGA used in master boards is TBD.
 
 \section{DSP boards}
-The DSP boards are AMC cards that contain a FPGA, fast SDRAM (e.g.\ DDR3 or DDR4), four synchronized JESD204 high-speed DACs (AD9154, 16 channels in total) and one JESD204 ADC (ADC16DX370, 2 channels in total).
+The DSP boards are AMC cards that contain a FPGA, fast SDRAM (e.g.\ DDR3 or DDR4), two synchronized JESD204 multi-channel high-speed DACs (AD9154, 8 channels in total) and one/two (TBD) JESD204 ADC (1x ADC16DX370, 2 channels in total, or 2x AD9656, 8 channels in total, TBD).
 
 The DAC and ADC channels are sent to a FMC connector that can receive analog cards that contain devices such as RF mixers, and have their own front panel connectors. The purpose of using FMC here is to take advantage of the mechanical work that has already been done to support traditional digital FMC cards.
 
