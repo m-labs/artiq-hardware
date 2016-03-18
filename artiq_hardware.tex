@@ -27,7 +27,7 @@ The crates are compatible with the MicroTCA standard, and contain a power supply
 
 MicroTCA specifies a complicated ``IPMI'' management system. For compatibility reasons with other MicroTCA systems, the necessary hardware (a microcontroller circuit) should be present on the AMCs, but IPMI should otherwise be ignored as much as possible e.g.\ by keeping the power supplies on at all times.
 
-The gateware/runtime upgrade mechanisms for the hardware components are TBD.
+The gateware/runtime upgrade mechanisms for the hardware components are TBD. A possibility is to send firmware binaries over the fiber or Ethernet for the FPGAs to write into their flash and reboot themselves.
 
 \section{Master boards}
 A master board is a MicroTCA Carrier Hub (MCH) that:
