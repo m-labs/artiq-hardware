@@ -2,23 +2,45 @@
 \usepackage{fullpage}
 \usepackage{graphicx}
 \usepackage{palatino}
+\usepackage{fancyhdr}
 \usepackage{draftwatermark}
+\usepackage{enumitem}
+\setlist{nolistsep}
+
+\renewcommand{\headheight}{0.4in}
+\setlength{\headsep}{0.1in}
+
+\setlength{\headwidth}{\textwidth}
+\fancyhead[R]{\footnotesize m-labs.hk}
+\fancyhead[L]{
+   \includegraphics[height=0.17in]{m_labs_logo.pdf}
+}
+\chead{}
+\rfoot{}
+\cfoot{\thepage}
+\lfoot{}\pagestyle{fancy}
 
 \begin{document}
 
 \title{ARTIQ hardware proposal}
+\author{S\'ebastien Bourdeauducq, Robert J\"ordens (M-Labs)}
 
 \maketitle
 
-\section{Objectives}
-The purpose of this project is to offer high-quality and turnkey control electronics for quantum physics experiments. In particular, the system should be:
+\section{Background and objectives}
+Control electronics used in many trapped-ion and other quantum physics experiments suffers from a number of problems. In general, an ad-hoc solution is hastily put together in-house without enough consideration about good design, reproducibility, testing and documentation. This makes those systems unreliable, fragile, and difficult to use and maintain. It also duplicates work in different laboratories. In addition, the performance and features of the existing systems (e.g.\ regarding pulse shaping abilities) is becoming insufficient for some experiments.
+
+To alleviate those problems, M-Labs wish to propose high-quality and turnkey control hardware, which should be in particular:
 \begin{itemize}
-\setlength{\itemsep}{0pt}
 \item reproducible and open
 \item flexible and modular
 \item well tested
 \item well supported by the ARTIQ control software
 \end{itemize}
+
+This document describes the desired components and features of this system.
+
+We thank Joe Britton (ARL), Grzegorz Kasprowicz (Creotech/Warsaw University of Technology), David Leibrandt (NIST), and Daniel Slichter (NIST) for their valuable input.
 
 \section{System overview}
 
@@ -34,7 +56,6 @@ The gateware/runtime upgrade mechanisms for the hardware components are TBD. A p
 \section{Master boards}
 A master board is a MicroTCA Carrier Hub (MCH) that:
 \begin{itemize}
-\setlength{\itemsep}{0pt}
 \item distributes DRTIO commands to the other cards in the crate over the MicroTCA backplane (star topology)
 \item distributes DRTIO commands to other crates
 \item receives commands from another master board or the control PC
