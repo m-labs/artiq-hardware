@@ -51,7 +51,7 @@ The crates are compatible with the MicroTCA standard, and contain a power supply
 
 MicroTCA specifies a complicated ``IPMI'' management system. For compatibility reasons with other MicroTCA systems, the necessary hardware (a microcontroller circuit) should be present on the AMCs, but IPMI should otherwise be ignored as much as possible e.g.\ by keeping the power supplies on at all times.
 
-The gateware/runtime upgrade mechanisms for the hardware components are TBD. A possibility is to send firmware binaries over the fiber or Ethernet for the FPGAs to write into their flash and reboot themselves.
+The gateware/runtime upgrade mechanisms for the hardware components are TBD. A possibility is to send firmware binaries over the fiber or Ethernet for the FPGAs to write into their flash and reboot themselves, which is relatively simple and does not require additional hardware. Another possibility is to have a ``bootloader'' bitstream in flash that downloads the final bitstream ultimately from the control PC through the fiber/Ethernet network. But depending on the FPGA used, this solution may require an additional CPLD/small FPGA and SDRAM/PSRAM to buffer the final bitstream.
 
 \section{Master boards}
 A master board is a MicroTCA Carrier Hub (MCH) that:
@@ -70,7 +70,7 @@ A master board includes clock recovery and cleanup circuitry, and can be used to
 The FPGA used in master boards is TBD.
 
 \section{DSP boards}
-The DSP boards are AMC cards that contain a FPGA, fast SDRAM (e.g.\ DDR3 or DDR4), two synchronized JESD204 multi-channel high-speed DACs (AD9154, 8 channels in total) and one/two (TBD) JESD204 ADC (1x ADC16DX370, 2 channels in total, or 2x AD9656, 8 channels in total, TBD).
+The DSP boards are AMC cards that contain a FPGA, fast SDRAM (e.g.\ DDR3 or DDR4), two synchronized JESD204 multi-channel high-speed DACs (AD9154, 8 channels in total) and two synchronized JESD204 ADCs (AD9656, 8 channels in total).
 
 The DAC and ADC channels are sent to a FMC connector that can receive analog cards that contain devices such as RF mixers, and have their own front panel connectors. The purpose of using FMC here is to take advantage of the mechanical work that has already been done to support traditional digital FMC cards.
 
