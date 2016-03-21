@@ -96,7 +96,9 @@ TBD
 \section{Standalone digital boxes}
 The standalone digital boxes receive DRTIO commands (and possibly time) over a SFP and fiber connected to a master card, and generate and receive TTL pulses and digitally control devices such as SPI integrated circuits. They have TBD SMA connectors and TBD RJ45 connectors that can be connected to e.g.\ SPI devices. They contain their own power supply.
 
-The TTL boxes also have a dedicated clock input SMA connector, that can override the clock recovered from the SFP.
+The digital boxes also have a dedicated clock input SMA connector, that can override the clock recovered from the SFP.
+
+For convenience, the boxes also contain one AD5370 SPI DAC with its 40 channels connected to a D-sub connector (e.g.\ DD-50).
 
 The FPGA used in TTL boxes is TBD.
 
