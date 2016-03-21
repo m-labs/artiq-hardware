@@ -76,7 +76,7 @@ In case of difficulties with board layout, the number of ADC channels may be red
 
 The DAC and ADC channels are sent to a FMC connector that can receive analog cards that contain devices such as RF mixers, and have their own front panel connectors. The purpose of using FMC here is to take advantage of the mechanical work that has already been done to support traditional digital FMC cards.
 
-The FMC also has digital pins that can be used to control the analog cards.
+The FMC also has digital pins that can be used to control the analog cards. To improve signal quality, pins near analog signals should be grounded.
 
 DSP boards can be clocked from the backplane, or from a dedicated SMA connector on their front panel. High-quality clock distribution systems using semi-rigid coaxial cables can be used for particularly sensitive applications.
 
