@@ -74,7 +74,7 @@ The DSP boards are AMC cards that contain a FPGA, fast SDRAM (e.g.\ DDR3 or DDR4
 
 In case of difficulties with board layout, the number of ADC channels may be reduced.
 
-The DAC and ADC channels are sent to a FMC connector that can receive analog cards that contain devices such as RF mixers, and have their own front panel connectors. The purpose of using FMC here is to take advantage of the mechanical work that has already been done to support traditional digital FMC cards.
+The DAC and ADC channels are sent to a FMC connector that can receive daughter cards that contain devices such as RF mixers, and have their own front panel connectors. The purpose of using FMC here is to take advantage of the mechanical work that has already been done to support traditional digital FMC cards.
 
 The FMC also has digital pins that can be used to control the analog cards. To improve signal quality, pins near analog signals should be grounded.
 
@@ -88,12 +88,18 @@ DSP boards receive high level DRTIO commands from the backplane, and synthesize,
 
 The FPGA used in DSP boards is TBD.
 
-\section{Analog FMC cards}
+\section{RF daughter cards}
 \subsection{Breakout card}
 The breakout card gives direct access to the DAC and ADC signals using SMA connectors on its front panel.
 
-\subsection{Others}
-TBD
+\subsection{Low frequency card}
+Signal bandwidth of a few MHz, swinging between +/- 10 V or so, suitable for ion trap transport waveforms or various DC or quasi-DC bias signals in general applications. This would involve op amps/instrumentation amps running off +/- 15V supplies in a similar configuration to the current PDQ output stages. Footprints for discrete component filters both before and after the amplifiers should be included.
+
+\subsection{RF card}
+For synthesis of tones from a few MHz out to about 3.3 GHz, suitable for AOM drive or Be+/Mg+/Ca+/NV center microwave transitions. This would involve a set of filters (common footprint, stuff boards with different cutoff parts to define band of interest -- these can be left open for users, or we can choose one or two basic frequency sets and they can run their own custom assembly order from the fab/layout docs if they want something different, TBD) followed by an RF amplifier stage (ERA-4SM is a good broadband low-phase-noise selection), a digital step attenuator, and a fast high-isolation RF switch.
+
+\subsection{Upconverting}
+For synthesis of tones beyond ~3.3 GHz, suitable for Yb+ or superconducting qubit microwave transitions. The board would have an input connector for an externally generated microwave carrier, split and sent to the LO ports of a set of mixers/modulators. We should decide (TBD) if these needs to be IQ mixers or if regular mixers are sufficient. There will be filters (again, common footprint for a choice of frequencies) between the DAC outputs and mixer IF ports. Each mixer RF port will be followed by an amplifier, a digital step attenuator, and a fast high-isolation RF switch.
 
 \section{Standalone digital boxes}
 The standalone digital boxes receive DRTIO commands (and possibly time) over a SFP and fiber connected to a master card, and generate and receive TTL pulses and digitally control devices such as SPI integrated circuits. They have TBD SMA connectors and TBD RJ45 connectors that can be connected to e.g.\ SPI devices. They contain their own power supply.
