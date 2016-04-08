@@ -91,9 +91,11 @@ Input cards contain one JESD204 multi-channel ADC (AD9656, 4 channels in total).
 
 The synchronization signals of the DACs and ADCs must be accessible to the FPGA to support synchronization across multiple cards.
 
-All output cards can be clocked from the FMC connector (which the DSP card can connect to a backplane clock), and from a dedicated SMA connector on their front panel (selectable by jumper, solder, or digitally controlled switch). High-quality clock distribution systems using semi-rigid coaxial cables can be used for particularly sensitive applications. The output cards thus have 5 SMA connectors on the front panel, which is the maximum number that fit in that limited space.
+All output cards can be clocked from the FMC connector (which the DSP card can connect to a backplane clock, potentially through a PLL that upconverts it from 10-100MHz, TBD), and from a dedicated SMA connector on their front panel (selectable by jumper, solder, or digitally controlled switch). High-quality clock distribution systems using semi-rigid coaxial cables can be used for particularly sensitive applications. The clock connector can also be used to experiment with different clocking systems. The output cards thus have 5 SMA connectors on the front panel, which is the maximum number that fit in that limited space.
 
 Input cards may omit the external clock connector, as the ADCs are slower and the applications are less sensitive to clock noise when acquiring signals.
+
+Input and output cards come in simple versions that contain only the basic circuitry plus an area that can receive a user-designed castellated module. Footprints for the castellated modules may be similar to those used by Marki Microwave.
 
 \subsection{Karabash simple output card}
 The four DAC channels are connected to pads that can receive a castellated prototyping module. The output card also has four SMA connectors on its front panel (in addition to the clock connector), with traces to the castellated module.
