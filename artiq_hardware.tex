@@ -64,6 +64,8 @@ A Metlino board is a double-width MicroTCA Carrier Hub (MCH) that:
 
 It has TBD SFPs on its front panel that are used for connecting to other devices (another Metlino board, TTL box, ...) over raw fiber optics, or to the control PC over Ethernet. The same fiber optic links may also be used for time transfer.
 
+Metlino cards also have a digital I/O connector (VHDCI) on their front panel, that can be used to implement TTLs with little additional hardware.
+
 A special Metlino board is the root master, which has the same role as the current core device in ARTIQ. It uses the same hardware as other master boards, but one of its SFPs is populated with a Ethernet PHY that is used to communicate with the control PC.
 
 Metlino boards includes clock recovery and cleanup circuitry, and can be used to clock the other boards in the crate. A Metlino board also includes a SMA clock input connector on its front panel, in case the clock recovered from SFP is not of sufficient quality for the application, and for clocking the root master.
