@@ -70,7 +70,7 @@ A special Metlino board is the root master, which has the same role as the curre
 
 Metlino boards includes clock recovery and cleanup circuitry, and can be used to clock the other boards in the crate. A Metlino board also includes a SMA clock input connector on its front panel, in case the clock recovered from SFP is not of sufficient quality for the application, and for clocking the root master.
 
-The FPGA used in Metlino boards is TBD (Kintex-7 or Zynq Ultrascale+, needs testing of Zynq).
+The FPGA used in Metlino boards is Kintex Ultrascale.
 
 \section{Sayma boards}
 The Sayma boards are double-width AMC cards that contain a FPGA, fast SDRAM (e.g.\ DDR3 or DDR4), and which are typically used to generate and process RF signals via high-speed DACs and ADCs.
@@ -81,7 +81,7 @@ The FMC connectors use the LPC pin assignments, plus 8 transceivers using the HP
 
 Sayma boards receive high level DRTIO commands from the backplane, and synthesize, buffer or process waveforms using their FPGA and SDRAM.
 
-The FPGA used in Sayma boards is XC7K325T (resource requirements: 28 kLUT, 14\% of the chip per DAC IQ channel pair at 1.25 GS/s, 16 bit). DRTIO is implemented over IOSERDES as all the transceivers are used for the FMCs.
+The FPGA used in Sayma boards is Kintex Ultrascale XCKU040.
 
 \section{RF daughter cards}
 \subsection{Commonalities}
