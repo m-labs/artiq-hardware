@@ -73,13 +73,15 @@ Metlino boards includes clock recovery and cleanup circuitry, and can be used to
 The FPGA used in Metlino boards is Kintex Ultrascale.
 
 \section{Sayma boards}
-The Sayma boards are double-width AMC cards that contain a FPGA, fast SDRAM (e.g.\ DDR3 or DDR4), and which are typically used to generate and process RF signals via high-speed DACs and ADCs.
+The Sayma boards are double-width AMC cards that contain a FPGA, fast SDRAM (DDR4), and which are typically used to generate and process RF signals via high-speed DACs and ADCs.
 
 The ADCs and DACs are mounted on external FMC cards called ``RF daughter cards''. The Sayma cards have two identical FMC slots, one may be used for transmitting signals (DACs) and one for receiving (ADCs).
 
 The FMC connectors use the LPC pin assignments, plus 8 transceivers using the HPC pin assignments. Some HPC ground pins are repurposed to provide +5V, -5V, +15V and -15V to the FMC mezzanine cards. The use of ground pins (and current limits on the power supplies) prevents damage when incorrect FMC mezzanines are plugged. The Sayma cards also have jumpers that disable those power supplies so that regular LPC + HPC transceivers FMC cards can be plugged.
 
 Sayma boards receive high level DRTIO commands from the backplane, and synthesize, buffer or process waveforms using their FPGA and SDRAM.
+
+The SDRAM bandwidth must be sufficient to supply TBD spline knots per second to the waveform generator, corresponding to TBD Gbps.
 
 The FPGA used in Sayma boards is Kintex Ultrascale XCKU040.
 
