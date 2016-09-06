@@ -323,4 +323,177 @@ For convenience, the boxes also contain one AD5370 SPI DAC with its 40 channels 
 
 The FPGA used in Kasli boxes is XC6SLX45T.
 
+\section{Sayma/Metlino FPGA choice}
+
+There are several constraints and interfaces that need to be satisfied by the FPGAs used for Metlino and Sayma.
+
+\paragraph{Manufacturer and Experience} M-Labs has accumulated significant experience with Xilinx programmable logic devices over the last decades.
+They generally are among the most advanced devices available closely tracking the latest technology node in semiconductor development.
+
+\paragraph{Compatibility} ARTIQ has focused on Xilinx Spartan 6 and Kintex 7 families so far.
+A move to a new family would require targeting new logic interfaces like transcievers or IOSERDES and new development boards.
+
+\paragraph{Consolidation} It is advantageous to reuse chips from the same device family or even the same chip in as many components of the ARTIQ hardware ecosystem as possible.
+Same dies in the different packages require no bitstream changes and no additional bitstream build/testing and maintenance overhead.
+Different speed grades of the same die and package do not require board
+changes.
+Using footprints where different sizes are available in compatible pin-outs would enable swapping chips without altering boards in response to growing needs for logic and other resources.
+
+\subsection{Resources available}
+
+The following table collates the most relevant resources of previous, present, and potential future FPGA devices that could be targeted in Sayma and Metlino.
+The amount of standard IOs are not expected to be a limiting resource.
+Nor do we anticipate the need for other hard-silicon resources like PCIe, memory controller, or CPU blocks.
+
+\begin{tabular}{l|llll}
+device   & LUT  & BRAM  & DSP  & transciever   \\\hline
+xc6s45t  & 27k  & 2\,Mb   & 58   & 4 GTP (3.2\,GHz)   \\
+xc7z010  & 18k  & 0.2\,Mb & 80   & -              \\
+xc7k325t-2 & 200k & 16\,Mb  & 0.8k & 16 GTX (10.3\,GHz) \\
+xc7k410t & 250k & 29\,Mb  & 1.5k & 16 GTX         \\
+xcku040  & 242k & 21\,Mb  & 1.9k & 20 GTH (12.5\,GHz) \\
+xcku060  & 330k & 38\,Mb  & 2.8k & 32 GTH         \\
+xcku095  & 550k & 60\,Mb  & 0.8k & 32 GTH, 32 GTY \\
+\end{tabular}
+
+\subsection{Resource requirements}
+
+\subsubsection{Front panel real estate}
+
+\paragraph{Sayma} A mid-size AMC is the standard board size for MicroTCA crates. Full-size AMC crates do not appear to be commonly available.
+RF connectors at the front panel need a sufficient spacing to be accessible for mounting.
+The 4 HP spacing of mid-size AMC is barely sufficient spacing to allow for mounting SMA connectors with proper application of torque and without damaging the equipment.
+Other connectors that do not require screws would be easier to mount.
+
+Assuming the standard front panel layout of mounting mechanisms and LEDs, there seems to be just about enough space for eight SMA connectors on the front panel of a double-width AMC.
+Potentially nine, if a separate clock input is required.
+
+The usability would be severely limited if significantly more connectors are added to the Sayma front panel.
+
+\paragraph{Metlino} There is space for four SFP cages, LEDs, and clock inputs
+on a single width MCH.
+
+\subsubsection{Sayma SAWG data rate constraints}
+
+The fast smart arbitrary waveform channels require a significant amount of logic resources but also necessitate fulfilling several interacting constraints on operating frequencies and clock ratios.
+
+For the DAC channel data rate $f_\mathrm{DATA}$ on the JESD204B link, the following rules need to be observed.
+
+\begin{itemize}
+   \item $t_\mathrm{DATA} = t_\mathrm{RTIO\_FINE}$. DAC samples need to mesh with RTIO timestamps (e.g. RF switches on TTLs and SYS\_REF tagging), otherwise DAC timing is not sample-accurate and samples will beat around RTIO timestamps.
+      The RTIO timestamp granularity is a global design variable of an ARTIQ DRTIO fabric instance.
+      The granularity does not need to be 1\,ns and can easily be altered globally, but it needs to be the same across the entire DRTIO fabric.
+      If e.\,g. the core device has a coarse clock of 125\,MHz and the high resolution TTL provide three more bits of resolution, then the fine timestamp granularity needs to be 1\,ns (or an integer submultiple) everywhere.
+    \item $t_\mathrm{SLOWDDS}/k = t_\mathrm{FASTDDS} = t_\mathrm{DATA}$ with $k$ a power of two. The accumulator phasing and datapath parallelization methods that allow generating multiple samples in a single clock cycle only work for powers of two.
+    \item $t_\mathrm{SLOWDDS}$ can potentially be as low as 4\,ns on Kintex 7 with speed grade 2 or better, certainly as low as 5\,ns. The possibility of 4\,ns fabric timing would need to be explored and verified.
+    \item $t_\mathrm{SLOWDDS} = m t_\mathrm{RTIO\_FINE}$: The spline interpolators, RTIO updates, and the slow DDS should mesh with the fine timestamp (e.g. RF switches on TTLs).
+    \item $t_\mathrm{SLOWDDS} = p t_\mathrm{RTIO}$: The spline interpolators, RTIO updates, and the slow DDS should mesh with the coarse timestamp (e.g. relative to RF switches on coarse TTLs). $p$ is a power of two in the current ARTIQ architecture.
+    \item $f_\mathrm{DATA} \leq 1.09\,\mathrm{GHz}$ or even $ \leq
+       1.03\,\mathrm{GHz}$ for typical DAC and FPGA transciever line rate.
+\end{itemize}
+
+The DAC sample rate $f_\mathrm{DAC}$ after interpolation and up-sampling from $f_\mathrm{DATA}$ needs to satisfy:
+
+\begin{itemize}
+   \item $f_\mathrm{DATA} \leq 2.4\,\mathrm{GHz}$: Typical DAC sample rate
+   \item $f_\mathrm{DAC} = q f_\mathrm{DATA}$ with $q \in \{1, 2, 4, 8\}$: Available interpolation options
+\end{itemize}
+
+\subsubsection{FPGA logic resources}
+
+\paragraph{Transcievers}
+
+\begin{itemize}
+   \item Sayma DRTIO: one GTX/GTH upstream, rest downstream.
+   \item Metlino DRTIO: 12 or 6 GTX/GTH downstream to supplie 12 or 6 AMC cards in a rack. One GTX/GTH upstream. At least one downstream: 14 or 8 transcievers total.
+   \item Sayma DAC, currently AD9154: 8 JESD204B lanes, 8 GTX/GTH TX halves, 10 GHz line rate: speed grade -2 xc7k, any on xcku
+   \item Sayma ADC: 4 GTX/GTH RX halves
+\end{itemize}
+
+\paragraph{Logic and RAM}
+
+\begin{itemize}
+   \item ARTIQ device CPU(s) and miscellaneous logic resources provide a good  estimate for the additional logic required to support DRTIO.
+      The kc705-nist\_qc2 design occupies 23k LUT and 5\,Mb BRAM.
+      The pipistrello-nist\_qc1 design uses 15k LUT and 1\,Mb BRAM (on a slightly different architecture).
+    \item parallelized FIR: 4 channel, 4x parallelism, 30 taps: 240 DSP
+    \item parallelized HBF + tricks: 4 channel, 4x parallelism, 30 taps: 120 DSP
+    \item RTIO FIFOs: 4 channel, 128 knots per RTIO channel: 4Mb
+   \item PID, extrapolating from redpid (xc7z010): 2 channel 125MHz ADC/DAC + misc DSP, full servo crossbar matrix: 13 kLUT, 50 DSP
+\end{itemize}
+
+Several design studies were performed for different configurations of the Sayma SAWG channels:
+
+\begin{itemize}
+    \item Sayma initial SAWG on kc705: 2 channel, 8x parallelism, 125MHz: 28k LUT
+    \item Sayma advanced draft SAWG on kc705: 4 channel, 4x parallelism, 200MHz: 33k LUT
+    \item Sayma advanced draft SAWG on kc705: 4 channel, 8x parallelism, 125MHz: 53k LUT
+    \item Sayma advanced draft SAWG on kc705: 8 channel, 8x parallelism, 125MHz: 106k LUT
+    \item Sayma advanced draft SAWG on kcu105: 4 channel 4x parallelism, 200MHz: 33k LUT
+\end{itemize}
+
+\subsection{Prototyping options}
+
+For development and differential debugging with hardware prototypes it is highly desirable to have access to a development/evaluation board that uses similar components as Sayma and Metlino.
+The following devices are the prominent choices:
+
+\paragraph{KC705}
+
+Containing a xc7k325t it is the primary ARTIQ prototyping platform.
+Almost all of the relevant hardware is supported or will be in the near future.
+In order to support the Metlino Ethernet uplink the following would need to be developed:
+
+\begin{itemize}
+   \item A transciever-based Ethernet PHY to support communication of the core
+      device with the PC (SFP module).
+\end{itemize}
+
+This is of medium complexity and cost.
+
+\paragraph{AFCK}
+
+Similar to the KC705, the board support package (BSP) would \emph{additionally} require support for:
+
+\begin{itemize}
+   \item (minor) JTAG mux
+   \item (minor) rack management/IPMI
+\end{itemize}
+
+Both appear to be of minor complexity and cost.
+
+\paragraph{KCU105}
+
+The KCU105 is built around a xcku040 Kintex Ultrascale.
+Supporting the FPGA and the relevant components of the board would necessitate developing support for:
+
+\begin{itemize}
+    \item DDR4 memory and controller
+    \item GTH transcievers for DRTIO
+    \item Copper ethernet PHY (SGMII) or transciever based using GTH+SFP
+    \item (minor) IOSERDES (for high-resolution TTL channels)
+    \item (minor) multiple flash layout/JTAG
+\end{itemize}
+
+The first three items are of medium complexity and cost.
+
+\subsection{Recommendation}
+
+\paragraph{FPGA choice} Judging from the resource requirements and miscellaneous constraints listed above, the available FPGAs can be classified in their applicability to Metlino, Sayma, and Kasli as follows:
+
+\begin{tabular}{l|lllll}
+	 & xc6s45t & xc7k325t & xcku040 \\\hline
+   Sayma 4 ADC, 4 DAC & insufficient & good & overkill \\
+   Sayma 8 ADC, 8 DAC & insufficient & insufficient & good \\
+   Metlino 12 AMC & insufficient & good & good \\
+   Metlino 6 AMC & insufficient & good & overkill \\
+   Kasli & good & overkill & overkill\\
+\end{tabular}
+
+\paragraph{Data and sample rates}
+
+\begin{itemize}
+   \item $f_\mathrm{DATA}$: 800\,MHz or 1\,GHz
+   \item $f_\mathrm{DAC} = 2\times f_\mathrm{DATA}$
+\end{itemize}
+
 \end{document}
