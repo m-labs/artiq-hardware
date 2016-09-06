@@ -321,7 +321,7 @@ The Kasli boxes also have a dedicated clock input SMA connector, that can overri
 
 For convenience, the boxes also contain one AD5370 SPI DAC with its 40 channels connected to a D-sub connector (e.g.\ DD-50).
 
-The FPGA used in Kasli boxes is XC6SLX45T.
+The FPGA used in Kasli boxes is XC6SLX45T or XC7A100T.
 
 \section{Sayma/Metlino FPGA choice}
 
@@ -345,15 +345,17 @@ The following table collates the most relevant resources of previous, present, a
 The amount of standard IOs are not expected to be a limiting resource.
 Nor do we anticipate the need for other hard-silicon resources like PCIe, memory controller, or CPU blocks.
 
+\noindent
 \begin{tabular}{l|llll}
-device   & LUT  & BRAM  & DSP  & transciever   \\\hline
-xc6s45t  & 27k  & 2\,Mb   & 58   & 4 GTP (3.2\,GHz)   \\
-xc7z010  & 18k  & 0.2\,Mb & 80   & -              \\
-xc7k325t-2 & 200k & 16\,Mb  & 0.8k & 16 GTX (10.3\,GHz) \\
-xc7k410t & 250k & 29\,Mb  & 1.5k & 16 GTX         \\
-xcku040  & 242k & 21\,Mb  & 1.9k & 20 GTH (12.5\,GHz) \\
-xcku060  & 330k & 38\,Mb  & 2.8k & 32 GTH         \\
-xcku095  & 550k & 60\,Mb  & 0.8k & 32 GTH, 32 GTY \\
+   device   & LUT  & BRAM  & DSP  & transciever   \\\hline
+   xc6s45t  & 27k  & 2\,Mb   & 58   & 4 GTP (3.2\,GHz)   \\
+   xc7a100t-2 & 63k  & 4.9\,Mb & 240  & 8 GTP (6.6\,GHz)  \\
+   xc7z010  & 18k  & 0.2\,Mb & 80   & -              \\
+   xc7k325t-2 & 200k & 16\,Mb  & 0.8k & 16 GTX (10.3\,GHz) \\
+   xc7k410t & 250k & 29\,Mb  & 1.5k & 16 GTX         \\
+   xcku040  & 242k & 21\,Mb  & 1.9k & 20 GTH (12.5\,GHz) \\
+   xcku060  & 330k & 38\,Mb  & 2.8k & 32 GTH         \\
+   xcku095  & 550k & 60\,Mb  & 0.8k & 32 GTH, 32 GTY \\
 \end{tabular}
 
 \subsection{Resource requirements}
@@ -478,22 +480,34 @@ The first three items are of medium complexity and cost.
 
 \subsection{Recommendation}
 
-\paragraph{FPGA choice} Judging from the resource requirements and miscellaneous constraints listed above, the available FPGAs can be classified in their applicability to Metlino, Sayma, and Kasli as follows:
+\paragraph{FPGA choice} Judging from the resource requirements and constraints listed above, the available FPGAs can be classified by their applicability to Metlino, Sayma, and Kasli as follows:
 
+\noindent
 \begin{tabular}{l|lllll}
-	 & xc6s45t & xc7k325t & xcku040 \\\hline
-   Sayma 4 ADC, 4 DAC & insufficient & good & overkill \\
-   Sayma 8 ADC, 8 DAC & insufficient & insufficient & good \\
-   Metlino 12 AMC & insufficient & good & good \\
-   Metlino 6 AMC & insufficient & good & overkill \\
-   Kasli & good & overkill & overkill\\
+   & xc6s45t & xc7a100t & xc7k325t & xcku040 \\\hline
+   Sayma 4 ADC, 4 DAC & insufficient & insufficient & good & overkill \\
+   Sayma 8 ADC, 8 DAC & insufficient & insufficient & insufficient & good \\
+   Metlino 12 AMC & insufficient & insufficient & good & good \\
+   Metlino 6 AMC & insufficient & insufficient & good & overkill \\
+   Kasli & good & good & overkill & overkill\\
 \end{tabular}
 
-\paragraph{Data and sample rates}
+\paragraph{Data and sample rates} The following choices for data rates and
+lanes appear to be interesting (BW: bandwidth; SSB: single sideband; DSB: dual
+sideband):
 
-\begin{itemize}
-   \item $f_\mathrm{DATA}$: 800\,MHz or 1\,GHz
-   \item $f_\mathrm{DAC} = 2\times f_\mathrm{DATA}$
-\end{itemize}
+\noindent
+\begin{tabular}{llllllll}
+   $f_\mathrm{DAC}$ & $f_\mathrm{DATA}$ & line rate
+   & lanes & $f_1,f_2$ DSB BW & $f_0$ SSB BW & BW mix 2nd+3rd \\\hline
+   2.4\,GHz & 600\,MHz & 6\,GHz & 8 & 150\,MHz & 0--300\,MHz & 300--900\,MHz \\
+   2\,GHz & 1000\,MHz & 10\,GHz & 8 & 125\,MHz & 0--500\,MHz & 500--1500\,MHz \\
+   1.6\,GHz & 800\,MHz & 8\,GHz & 8 & 200\,MHz & 0--400\,MHz & 400--1200\,MHz \\
+   300\,MHz & 300\,MHz & 6\,GHz & 4 & 150\,MHz & 0--150\,MHz & 150--450\,MHz \\
+\end{tabular}
+
+For 4 JESD lanes, use DAC ``mix mode'' (switching up-conversion by $f_\mathrm{DAC}$) to
+emphasize second Nyquist zone from $f_\mathrm{DAC}/2$ to $f_\mathrm{DAC}$. Zeros at 0\,Hz
+and $2\times f_\mathrm{DAC}$.
 
 \end{document}
