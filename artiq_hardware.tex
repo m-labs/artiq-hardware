@@ -494,16 +494,16 @@ The first three items are of medium complexity and cost.
 
 \paragraph{Data and sample rates} The following choices for data rates and
 lanes appear to be interesting (BW: bandwidth; SSB: single sideband; DSB: dual
-sideband):
+sideband; ``size'': resource usage in units of 13k LUTs per channel):
 
 \noindent
-\begin{tabular}{llllllll}
+\begin{tabular}{lllllll}
    $f_\mathrm{DAC}$ & $f_\mathrm{DATA}$ & line rate
-   & lanes & $f_1,f_2$ DSB BW & $f_0$ SSB BW & BW mix 2nd+3rd \\\hline
-   2.4\,GHz & 600\,MHz & 6\,GHz & 8 & 150\,MHz & 0--300\,MHz & 300--900\,MHz \\
-   2\,GHz & 1000\,MHz & 10\,GHz & 8 & 125\,MHz & 0--500\,MHz & 500--1500\,MHz \\
-   1.6\,GHz & 800\,MHz & 8\,GHz & 8 & 200\,MHz & 0--400\,MHz & 400--1200\,MHz \\
-   300\,MHz & 300\,MHz & 6\,GHz & 4 & 150\,MHz & 0--150\,MHz & 150--450\,MHz \\
+   & lanes & ``size'' & $f_1,f_2$ DSB BW & BW mix 2nd+3rd \\\hline
+   2.4\,GHz & 600\,MHz & 6\,GHz & 8 & 4 & 150\,MHz & 300--600--900\,MHz \\
+   2\,GHz & 1000\,MHz & 10\,GHz & 8 & 8 & 125\,MHz & 500--1000--1500\,MHz \\
+   1.6\,GHz & 800\,MHz & 8\,GHz & 8 & 4 & 200\,MHz & 400--800--1200\,MHz \\
+   300\,MHz & 300\,MHz & 6\,GHz & 4 & 2 & 150\,MHz & 150--300--450\,MHz \\
 \end{tabular}
 
 For 4 JESD lanes, use DAC ``mix mode'' (switching up-conversion by $f_\mathrm{DAC}$) to
